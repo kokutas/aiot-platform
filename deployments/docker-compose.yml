@@ -1,0 +1,43 @@
+services:
+  prometheus:
+    image: bitnami/prometheus:latest
+    container_name: prometheus
+    hostname: prometheus
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - $PWD/configs/prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
+      - $PWD/data/prometheus/data:/opt/bitnami/prometheus/data
+    networks:
+      proxy:
+        ipv4_address: 10.0.1.211
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - $PWD/data/grafana/data:/var/lib/grafana
+    networks:
+      proxy:
+        ipv4_address: 10.0.1.221
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
+
+networks:
+  proxy:
+    driver: bridge
+    name: AIoT
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.1.0/24
+          gateway: 10.0.1.1
