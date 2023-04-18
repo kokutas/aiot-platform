@@ -1,9 +1,27 @@
 services:
+  nacos:
+    image: nacos/nacos-server:${NACOS_VERSION}
+    container_name: nacos
+    hostname: nacos
+    restart: on-failure
+    environment:
+      - TZ=Asia/Shanghai
+      - MODE=standalone
+      - PREFER_HOST_MODE=hostname
+    volumes:
+      - $PWD/configs/nacos/application.properties:/home/nacos/conf/application.properties
+      - $PWD/data/nacos/log:/home/nacos/logs
+    networks:
+      proxy:
+        ipv4_address: ${NACOS_IPV4_ADDRESS}
+    ports:
+      - 8848:8848
+
   prometheus:
-    image: bitnami/prometheus:latest
+    image: bitnami/prometheus:${PROMETHEUS_VERSION}
     container_name: prometheus
     hostname: prometheus
-    restart: always
+    restart: on-failure
     environment:
       - TZ=Asia/Shanghai
     volumes:
@@ -11,22 +29,24 @@ services:
       - $PWD/data/prometheus/data:/opt/bitnami/prometheus/data
     networks:
       proxy:
-        ipv4_address: 10.0.1.211
+        ipv4_address: ${PROMETHEUS_IPV4_ADDRESS}
     ports:
       - 9090:9090
+    depends_on:
+      - nacos
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:${GRAFANA_VERSION}
     container_name: grafana
     hostname: grafana
-    restart: always
+    restart: on-failure
     environment:
       - TZ=Asia/Shanghai
     volumes:
       - $PWD/data/grafana/data:/var/lib/grafana
     networks:
       proxy:
-        ipv4_address: 10.0.1.221
+        ipv4_address: ${GRAFANA_IPV4_ADDRESS}
     ports:
       - 3000:3000
     depends_on:

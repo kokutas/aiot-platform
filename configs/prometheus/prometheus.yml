@@ -18,3 +18,9 @@ scrape_configs:
     metrics_path: "/metrics"
     static_configs:
       - targets: ["localhost:9090"]
+
+  - job_name: "nacos"
+    scrape_interval: 5s
+    metrics_path: "/nacos/actuator/prometheus"
+    static_configs:
+      - targets: ["nacos:8848"]

@@ -1,7 +1,7 @@
 
 
-docker-compose-up:
-	@make docker-compose-down
+up:
+	@make down
 	@docker-compose -p aiot-platform -f deployments/docker-compose.yml up -d
-docker-compose-down:
+down:
 	@docker-compose -p aiot-platform -f deployments/docker-compose.yml down -v
